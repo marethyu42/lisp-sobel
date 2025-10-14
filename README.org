@@ -1,0 +1,2 @@
+* Welcome!
+This is a code base that imports a ppm you can use [this](https://www.online-utility.org/image/convert/to/PPM) to convert a png to ppm. To view a ppm, you can use [this](https://www.cs.rhodes.edu/welshc/COMP141_F16/ppmReader.html) website to view it's output, which is an edge detected version of itself (using the sobel feldman operator). 
