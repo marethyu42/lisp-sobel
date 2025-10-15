@@ -4,7 +4,7 @@
 
 ;; following code was NOT made by me. online stack overflow user designed this.
 (defun counter (len)
-  "equivalent to a range function in python"
+  "equivalent to a range function in python, starting from 0 and going to 1- LEN"
   (loop for i below len
         collect i))
 
@@ -16,8 +16,8 @@
 	  (loop for val in (cdr lst) by #'cdddr collect val)
 	  (loop for val in (cddr lst) by #'cdddr collect val)))
 
-(defun make-ppm (size data &optional (format "P3") (max 255) (output "output.ppm"))
-  "SIZE is a list of (width height). DATA is a list of (r g b) values. import DATA to create a ppm. has side effects."
+(defun make-ppm (size data &optional (format "P3") (max 255) (output "output.ppm")) ;;using ppms to import file information! (how dare i use side effects in lisp :O)
+  "SIZE is a list of (width height). DATA is a list of (r g b) values. import DATA to create a ppm. bonus, you can rename the file with OUTPUT. has side effects." 
   (with-open-file (f output
                      :direction :output
                      :if-exists :supersede
@@ -51,12 +51,12 @@
 	collect (make-list 3 :initial-element (round (/ (reduce #'+ pixel) 3))))) 
 
 (setq width 300)
-(setq height 300)  ;; defining the height & width for our image
+(setq height 300)  ;; defining the height & width for our image ;; goal: make this automatic? (a bit hard to do :c)
 
 (defvar img (fit-into-threes-2 (string-to-list (read-file "input.ppm")))) ;;importing our image
 (defvar gray-img (grayscale img)) ;;grayscaling it
 
-(make-ppm (list width height) gray-img) ;; unnecessary bonus mid step to show how the image is now gray
+(make-ppm (list width height) gray-img) ;; unnecessary bonus middle step to show how the image is now gray
 
 (defun get-region (img middle width)
   "IMG should be a list of elements that are (r g b) MIDDLE should be the starting index and WIDTH should be the width of the img. gives a list of the 3x3 region around the middle point"
@@ -70,7 +70,7 @@
   (apply #'+ (mapcar #'(lambda (x y) (* x y)) mtrx1 mtrx2)))
 
 (defvar dir-x '(-1 0 1 -2 0 2 -1 0 1))
-(defvar dir-y '(-1 -2 -1 0 0 0 1 2 1)) ;;defining our two filters
+(defvar dir-y '(-1 -2 -1 0 0 0 1 2 1)) ;;defining our two filters, our x and y derivative for sobel feldman
 
 (defun prep-for-convolution (img size)
   "thickens border of image due to convolution's data loss. IMG of data and size of SIZE (width height)"
@@ -88,7 +88,8 @@
 
 (defun new-convolve-img (img size filter
 			 &optional (expanded (prep-for-convolution img size))
-			   (x 0) (y 0) (product nil))
+			   (x 0) (y 0) (product nil)) ;; (god i hated this function (IT WAS THE SOURCE OF MY ERRORS D:) that's why its "new")
+  ;; this is in charge of deciding how/where we apply the filter on our base image which does explain why the bug make it look weird
   "image IMG and SIZE (width height) with 3x3 matrix FILTER"
   (let ((val (+ 2 (cadr size) 1 x (* 3 y))))
     (cond
@@ -106,13 +107,22 @@
 				   filter))))))))
 
 (defun simplify-output (output)
-  "convert a grayscaled img 3x3 region OUPUT into 9 sole numbers, i.e. for one of them (3 3 3) -> 3, for simplicity"
+  "convert a grayscaled img 3x3 region OUPUT into 9 sole numbers, i.e. ((3 3 3) (4 4 4) ...) -> (3,4,...) for simplicity"
   (alexandria::flatten (mapcar #'(lambda (x) (list (caar x) (caadr x) (caaddr x))) output)))
 
-(defvar final ;;final output!
+(defvar final ;;final output! yay
   (mapcar (lambda (z) (make-list 3 :initial-element (round z)))
 	  (mapcar (lambda (x y) (sqrt (+ (* x x) (* y y))))
 		  (new-convolve-img gray-img (list width height) dir-x)
 		  (new-convolve-img gray-img (list width height) dir-y))))
 
 (time (make-ppm (list width height) final)) ;;side effect, write output to file
+
+
+;; id love to add:
+;; - make everything work with one function call (ough it's a little bit of a mess right now :P) for convenience
+;; - use the edge detected image to make lines in the source image colored (make edges gold!)
+;; - use the edge detected image to alter the edges (make edges brighter!)
+;;   - try out other fun images (where does this work well vs not at all?)
+;;   - is it pretty?? if not: how do i make it pretty?
+;; - huge leap: convert between png to ppm for the user? (what if i just api call to someone else who does the hardwork :P)
