@@ -1,7 +1,7 @@
 * Welcome!
 This is a code base that imports a ppm you can use [[https://www.online-utility.org/image/convert/to/PPM][this]] to convert a png to ppm. To view a ppm, you can use [[https://www.cs.rhodes.edu/welshc/COMP141_F16/ppmReader.html][this]] website to view it's output, which is an edge detected version of itself (using the sobel feldman operator). Here are screenshots of what it does:
 
-Here's my input image (some pretty fanart of a D&D character I like):
+Here's my input image (some pretty fanart [[https://x.com/Kazzafraz][(credit)]] of a D&D character I like):
 
 [[file:/screenshots/input-ss.png]]
 
