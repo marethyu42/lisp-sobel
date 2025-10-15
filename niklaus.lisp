@@ -125,4 +125,14 @@
 ;; - use the edge detected image to alter the edges (make edges brighter!)
 ;;   - try out other fun images (where does this work well vs not at all?)
 ;;   - is it pretty?? if not: how do i make it pretty?
+;; - make it faster >:3
 ;; - huge leap: convert between png to ppm for the user? (what if i just api call to someone else who does the hardwork :P)
+
+
+;; large term goals, if i want to make this a big platform for my computer graphics needs:
+
+;; - gaussian blur
+;; - kuhwahara
+;; - DoG
+;; - ditherpunk (https://surma.dev/things/ditherpunk/)
+;; - canny edge detector
